@@ -1,0 +1,38 @@
+.vertical-timeline-element--work:hover {
+    transform: scale(1.02);
+  }
+  
+  .vertical-timeline-element--work:hover .vertical-timeline-element-icon {
+    transform: scale(1.1);
+  }
+  
+  .vertical-timeline-element-icon:hover {
+    cursor: pointer;
+  }
+  
+  .vertical-timeline-element-content {
+    position: relative;
+  }
+  
+  .vertical-timeline-element-content::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -20px;
+    width: 10px;
+    height: 10px;
+    background: #ff5733; /* Example accent color */
+    border-radius: 50%;
+    transform: translateY(-50%);
+  }
+  
+  @media (prefers-reduced-motion: no-preference) {
+    .vertical-timeline-element--work {
+      transition: transform 0.3s ease-in-out;
+    }
+  
+    .vertical-timeline-element-icon {
+      transition: transform 0.3s ease-in-out;
+    }
+  }
+  
