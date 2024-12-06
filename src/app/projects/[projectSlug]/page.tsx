@@ -115,6 +115,8 @@ export default function ProjectSlug({ params }: { params: { projectSlug: string 
                       ),
                       p: ({ children, ...props }) => {
                         const isVideoLink =
+                          Array.isArray(children) &&
+                          children.length > 0 &&
                           typeof children[0] === "string" &&
                           ReactPlayer.canPlay(children[0]);
 
