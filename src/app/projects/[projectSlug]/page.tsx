@@ -146,12 +146,14 @@ export default function ProjectSlug({ params }: { params: { projectSlug: string 
                       ),
                       img: ({ src, alt, ...props }) => (
                         <div className="my-6">
-                          <img
+                          <Image
                             src={src || ""}
                             alt={alt || ""}
                             className="rounded-lg shadow-md mx-auto"
                             style={{ maxWidth: "100%" }}
                             {...props}
+                            width={800}
+                            height={600}
                           />
                           {alt && (
                             <p className="text-center text-sm text-gray-500 mt-2 italic">
