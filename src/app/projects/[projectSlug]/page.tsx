@@ -1,278 +1,194 @@
-'use client'
+"use client";
 
-import React from 'react'
-import Image from 'next/image'
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { projectsData } from "@/lib/data";
-import YouTube from 'react-youtube';
-import { AiOutlineLink } from "react-icons/ai";
-import { AiFillGithub } from "react-icons/ai";
-import Link from 'next/link';
-import { delay, motion } from 'framer-motion';
+import { fetchReadmeFromGitHub } from "@/lib/github";
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import ReactPlayer from "react-player";
+import { AiOutlineLink, AiFillGithub } from "react-icons/ai";
+import Link from "next/link";
+import { motion } from "framer-motion";
 
-// function LeftAlignedLine() {
-//     return (
-//         <>
-//             <div className='bg-black dark:bg-white/20' style={{ top: -15, left: '-5px', width: '12px', height: '12px', borderRadius: '50%' }}></div>
-//             <div className='border-l-2 border-black dark:border-white/20 h-40' style={{ marginRight: '1rem' }}></div>
-//         </>
-//     )
-// }
-
-interface YouTubePlayerProps {
-    vidId: {
-        vidId: string;
-    };
-}
-
-// const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ vidId }) => {
-//     const videoId = vidId?.vidId;
-
-//     const opts = {
-//         height: '390',
-//         width: '640',
-//         playerVars: {
-//             autoplay: 0,
-//         },
-//     };
-
-//     return (
-//         <YouTube videoId={videoId} opts={opts} />
-//     );
-// };
-
-const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ vidId }) => {
-    const videoId = vidId?.vidId;
-
-    // Define options with dynamic width and height
-    const opts = {
-        height: '100%',
-        width: '100%',
-        playerVars: {
-            autoplay: 0,
-        },
-    };
-
-    // Set up a state to track the container width
-    const [containerWidth, setContainerWidth] = React.useState<number>(0);
-
-    // Function to update container width
-    const updateContainerWidth = () => {
-        const width = document.getElementById('youtube-container')?.clientWidth;
-        if (width) {
-            setContainerWidth(width);
-        }
-    };
-
-    // Update container width on component mount and window resize
-    React.useEffect(() => {
-        updateContainerWidth();
-        window.addEventListener('resize', updateContainerWidth);
-        return () => {
-            window.removeEventListener('resize', updateContainerWidth);
-        };
-    }, []);
-
-    return (
-        // <div id="youtube-container sm:!pb-0" style={{ width: '100%', height: '0', paddingBottom: `${(containerWidth / 16) * 15}px`, position: 'relative' }}>
-        //     <YouTube videoId={videoId} opts={{ ...opts, width: '100%', height: '390' }} />
-        // </div>
-        <div id="youtube-container" className="relative w-full">
-            <div className="w-full pb-[calc(100%/16*19)] sm:pb-[28rem] mt-4" style={{ height: '0' }}>
-                <YouTube videoId={videoId} opts={{ ...opts, width: '100%', height: '390' }} />
-            </div>
-        </div>
-    );
+type ProjectFeaturesDetail = {
+  [key: string]: {
+    name: string;
+    description: string;
+    image: string[];
+    video: string;
+    isReadme?: boolean;
+    repoUrl?: string;
+  };
 };
 
-export default function ProjectSlug({ params }: {
-    params: { projectSlug: string }
-}) {
-    return (
-        <section
-            className='flex flex-col items-center px-4 min-h-screen scroll-mt-28'>
-            {projectsData.map((project, index) => (
-                <React.Fragment key={index}>
-                    {project.slug === params.projectSlug && (
-                        <>
-                            <div>
-                                <motion.h1 className='text-5xl text-center z-0'
-                                    initial={{ opacity: 0, y: 100 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{
-                                        delay: .5,
-                                    }}
-                                >
-                                    {project.title}
-                                </motion.h1>
-                                <motion.div className='z-[1]'
-                                    initial={{ opacity: 0, scale: 0 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{
-                                        type: "spring",
-                                        duration: .2
-                                    }}
-                                >
-                                    <Image
-                                        src={project.thumbnailImageUrl}
-                                        alt='Project Snapshot'
-                                        quality={95}
-                                        className='w-[44rem] h-[24rem] rounded-lg shadow-2xl mt-10 mx-auto' />
-                                </motion.div>
-                                <motion.h3 className='text-xl font-bold text-center mt-10'
-                                    initial={{
-                                        opacity: 0,
-                                    }}
-                                    whileInView={{
-                                        opacity: 1,
-                                    }}
-                                    transition={{
-                                        duration: 1
-                                    }}
-                                    viewport={{
-                                        once: true
-                                    }}
-                                >
-                                    Link
-                                    {(project?.hostedLink.length > 0) ? (
-                                        <div className='flex justify-center mt-5'>
-                                            <Link className='p-2 opacity-70 hover:scale-125 hover:opacity-100 transition delay-[.5]' href={`${project?.hostedLink}`} target='_blank'>
-                                                <AiOutlineLink />
-                                            </Link>
-                                        </div>
-                                    ) : null}
-                                    {(project?.githubRepoLink.length > 0) ? (
-                                        <div className='flex justify-center mt-5'>
-                                            <Link className='p-2 opacity-70 hover:scale-125 hover:opacity-100 transition delay-[.5]' href={`${project?.githubRepoLink}`} target='_blank'>
-                                                <AiFillGithub />
-                                            </Link>
-                                        </div>
-                                    ) : null}
-                                </motion.h3>
-                            </div>
-                            {(project?.projectBrief) ? (
-                                <motion.div className='max-w-[90%] sm:max-w-[60%] mt-20' style={{ display: 'flex', alignItems: 'center', position: 'relative' }}
-                                    initial={{
-                                        opacity: 0,
-                                    }}
-                                    whileInView={{
-                                        opacity: 1,
-                                    }}
-                                    transition={{
-                                        duration: 1
-                                    }}
-                                    viewport={{
-                                        once: true
-                                    }}
-                                >
-                                    {/* <LeftAlignedLine /> */}
-                                    <div style={{ flex: 1 }}>
-                                        <h1 className='text-3xl'>Project Brief</h1>
-                                        <p>{project?.projectBrief}</p>
-                                    </div>
-                                </motion.div>
-                            ) : null}
-                            {(project?.keyFeatures.length > 0) ? (
-                                <motion.div className='max-w-[90%] sm:max-w-[60%] mt-20' style={{ display: 'flex', alignItems: 'center', position: 'relative' }}
-                                    initial={{
-                                        opacity: 0,
-                                    }}
-                                    whileInView={{
-                                        opacity: 1,
-                                    }}
-                                    transition={{
-                                        duration: 1
-                                    }}
-                                    viewport={{
-                                        once: true
-                                    }}
-                                >
-                                    {/* <LeftAlignedLine /> */}
-                                    <div style={{ flex: 1 }}>
-                                        <h1 className='text-3xl'>Key Features</h1>
-                                        <ul>
-                                            {project.keyFeatures.map((feature, index) => (
-                                                <li className='mt-3' key={index}>
-                                                    {index + 1}. {feature}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </motion.div>
-                            ) : null}
-                            {(project?.benefits) ? (
-                                <motion.div className='max-w-[90%] sm:max-w-[60%] mt-20' style={{ display: 'flex', alignItems: 'center', position: 'relative' }}
-                                    initial={{
-                                        opacity: 0,
-                                    }}
-                                    whileInView={{
-                                        opacity: 1,
-                                    }}
-                                    transition={{
-                                        duration: 1
-                                    }}
-                                    viewport={{
-                                        once: true
-                                    }}
-                                >
-                                    {/* <LeftAlignedLine /> */}
-                                    <div style={{ flex: 1 }}>
-                                        <h1 className='text-3xl'>Benefits</h1>
-                                        <p>{project?.benefits}</p>
-                                    </div>
-                                </motion.div>
-                            ) : null}
+export default function ProjectSlug({ params }: { params: { projectSlug: string } }) {
+  const [readmeContent, setReadmeContent] = useState<string | null>(null);
 
-                            <div className='max-w-[90%] sm:max-w-[60%] mt-20'>
-                                <motion.h1 className='text-3xl text-center'
-                                    initial={{
-                                        opacity: 0,
-                                        x: 100
-                                    }}
-                                    whileInView={{
-                                        opacity: 1,
-                                        x: 0
-                                    }}
-                                    transition={{
-                                        duration: .5
-                                    }}
-                                    viewport={{
-                                        once: true
-                                    }}
-                                >Features I&apos;ve Built</motion.h1>
-                                {Object.keys(project.projectFeaturesDetail).map((ftKey) => {
-                                    const vidIdObject = { vidId: project.projectFeaturesDetail[ftKey].video };
-                                    return (
-                                        <motion.div className='mt-20 last:mb-20' key={ftKey}
-                                            initial={{
-                                                opacity: 0,
-                                                x: -100
-                                            }}
-                                            whileInView={{
-                                                opacity: 1,
-                                                x: 0
-                                            }}
-                                            transition={{
-                                                duration: .5
-                                            }}
-                                            viewport={{
-                                                once: true
-                                            }}
-                                        >
-                                            <h1 className='text-xl font-semibold'>{project.projectFeaturesDetail[ftKey].name}</h1>
-                                            <p>{project.projectFeaturesDetail[ftKey].description}</p>
-                                            {(vidIdObject?.vidId.length > 0) ? (
-                                                <div className='flex justify-center mt-6'>
-                                                    <YouTubePlayer vidId={vidIdObject} />
-                                                </div>
-                                            ) : null}
-                                        </motion.div>
-                                    )
-                                })}
+  const project = projectsData.find((p) => p.slug === params.projectSlug);
+
+  useEffect(() => {
+    if (project) {
+      const readmeFeature = Object.entries(
+        project.projectFeaturesDetail as ProjectFeaturesDetail
+      ).find(([_, feature]) => feature.isReadme);
+
+      if (readmeFeature?.[1]?.repoUrl) {
+        fetchReadmeFromGitHub(readmeFeature[1].repoUrl).then((content) =>
+          setReadmeContent(content)
+        );
+      }
+    }
+  }, [project]);
+
+  if (!project) {
+    return <p className="text-center text-lg text-red-600">Project not found!</p>;
+  }
+
+  return (
+    <section className="min-h-screen bg-gray-100 py-12 px-4">
+      <div className="max-w-6xl mx-auto space-y-16">
+        {/* Project Title */}
+        <motion.h1
+          className="text-5xl font-extrabold text-center text-gray-800"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          {project.title}
+        </motion.h1>
+
+        {/* Project Brief */}
+        <p className="text-xl text-gray-700 text-center leading-relaxed">
+          {project.projectBrief}
+        </p>
+
+        {/* Project Features */}
+        {Object.entries(project.projectFeaturesDetail as ProjectFeaturesDetail).map(
+          ([featureKey, feature], index) => (
+            <motion.div
+              key={featureKey}
+              className={`bg-white p-8 rounded-lg shadow-lg space-y-6 ${
+                index % 2 === 0 ? "text-left" : "text-right"
+              }`}
+              initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              {/* Feature Title */}
+              <h2 className="text-3xl font-semibold text-gray-800">{feature.name}</h2>
+
+              {/* Feature Description */}
+              <p className="text-lg text-gray-600 leading-relaxed">{feature.description}</p>
+
+              {/* Feature Images */}
+              {feature.image.length > 0 && (
+                <div className="flex flex-wrap gap-4 mt-6 justify-center">
+                  {feature.image.map((img: string, idx: number) => (
+                    <Image
+                      key={idx}
+                      src={img}
+                      alt={`Feature ${idx}`}
+                      className="rounded-lg shadow-md"
+                      width={300}
+                      height={200}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* README Content */}
+              {feature.isReadme && readmeContent && (
+                <div className="mt-8 border-t pt-4">
+                  <h3 className="text-2xl font-medium text-gray-700 mb-4">
+                    Documentation
+                  </h3>
+                  <ReactMarkdown
+                    rehypePlugins={[rehypeRaw]} // Handle raw HTML in Markdown
+                    components={{
+                      h1: ({ ...props }) => (
+                        <h1 className="text-3xl font-bold mt-6 mb-4" {...props} />
+                      ),
+                      h2: ({ ...props }) => (
+                        <h2 className="text-2xl font-semibold mt-6 mb-3" {...props} />
+                      ),
+                      p: ({ children, ...props }) => {
+                        const isVideoLink =
+                          typeof children[0] === "string" &&
+                          ReactPlayer.canPlay(children[0]);
+
+                        if (isVideoLink) {
+                          return (
+                            <div className="my-6 flex justify-center">
+                              <ReactPlayer
+                                url={children[0] as string}
+                                controls
+                                className="rounded-lg shadow-md"
+                                width="100%"
+                                height="auto"
+                              />
                             </div>
-                        </>
-                    )}
-                </React.Fragment>
-            ))}
-        </section>
-    )
+                          );
+                        }
+
+                        return (
+                          <p className="text-gray-600 mb-4 leading-relaxed" {...props}>
+                            {children}
+                          </p>
+                        );
+                      },
+                      ul: ({ ...props }) => (
+                        <ul className="list-disc pl-6 mb-4 space-y-2" {...props} />
+                      ),
+                      ol: ({ ...props }) => (
+                        <ol className="list-decimal pl-6 mb-4 space-y-2" {...props} />
+                      ),
+                      img: ({ src, alt, ...props }) => (
+                        <div className="my-6">
+                          <img
+                            src={src || ""}
+                            alt={alt || ""}
+                            className="rounded-lg shadow-md mx-auto"
+                            style={{ maxWidth: "100%" }}
+                            {...props}
+                          />
+                          {alt && (
+                            <p className="text-center text-sm text-gray-500 mt-2 italic">
+                              {alt}
+                            </p>
+                          )}
+                        </div>
+                      ),
+                    }}
+                  >
+                    {readmeContent}
+                  </ReactMarkdown>
+                </div>
+              )}
+            </motion.div>
+          )
+        )}
+
+        {/* Links */}
+        <motion.div
+          className="flex justify-center space-x-6 mt-10"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          {project.hostedLink && (
+            <Link href={project.hostedLink} target="_blank">
+              <AiOutlineLink className="text-3xl text-gray-800 hover:text-gray-600" />
+            </Link>
+          )}
+          {project.githubRepoLink && (
+            <Link href={project.githubRepoLink} target="_blank">
+              <AiFillGithub className="text-3xl text-gray-800 hover:text-gray-600" />
+            </Link>
+          )}
+        </motion.div>
+      </div>
+    </section>
+  );
 }

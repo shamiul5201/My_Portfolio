@@ -78,34 +78,7 @@ export default function Project({ title, slug, projectThumbnailBrief, thumbnailI
                             )
                         })}
                     </div>
-                    {/* <div className='flex justify-between mt-8'>
-                        <motion.div
-                            variants={fadeInFromLeftAnimationVariants}
-                            initial="initial"
-                            whileInView="animate"
-                            viewport={{
-                                once: true,
-                            }}>
-                            <Image
-                                src={thumbnailImageUrl}
-                                alt='Project Snapshot'
-                                quality={95}
-                                className='w-[28rem] h-[18rem] rounded-lg shadow-xl hover:scale-105 transition' />
-                        </motion.div>
-                        <motion.div
-                            variants={fadeInFromRightAnimationVariants}
-                            initial="initial"
-                            whileInView="animate"
-                            viewport={{
-                                once: true,
-                            }}>
-                            <Image
-                                src={thumbnailImageUrl}
-                                alt='Project Snapshot'
-                                quality={95}
-                                className='w-[28rem] h-[18rem] rounded-lg shadow-xl hover:scale-105 transition' />
-                        </motion.div> 
-                    </div> */}
+
                     <button className="group bg-white px-7 py-3 mt-8 max-w-48 flex items-center justify-center gap-3 rounded-full outline-none focus:scale-[1.2] hover:scale-[1.2] active:scale-[1.1] transition cursor-pointer borderBlack-2 dark:bg-white/10 dark:hover:bg-white/15 mb-1 sm:mb-0 opacity-80 hover:opacity-90 mx-auto">
                         View Detail
                         <AiFillEye className='mt-[.15rem] opacity-30 group-hover:scale-150 group-hover:opacity-60 transition duration-300' />
