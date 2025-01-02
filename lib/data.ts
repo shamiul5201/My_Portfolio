@@ -270,7 +270,7 @@ export const projectsData = [
               name: "Project Overview",
               description: "",
               image: [], // Optional, keep static images if needed
-              video: "@/public/football_tracking_all_algorithms.mp4", // Optional, keep static video if needed
+              video: "", // Optional, keep static video if needed
               isReadme: true,
               repoUrl: "https://github.com/shamiul5201/Football_Detection_and_Tracking", // Add a flag to indicate this will render README content
             },
